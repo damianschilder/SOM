@@ -1,6 +1,7 @@
 from tariefeenheden import Tariefeenheden
 import tkinter as tk
 from bereken_prijs import prijs
+from betaling import betaling
 from pricing_table import PricingTable
 from creditcard import CreditCard
 from debitcard import DebitCard
@@ -17,25 +18,8 @@ class UI(tk.Frame):
   def handle_payment(self, info: UIInfo):
     price = prijs( info )
     price = price.bereken_prijs()
-    if info.payment == UIPayment.CreditCard:
-      c = CreditCard()
-      c.connect()
-      ccid: int = c.begin_transaction(round(price, 2))
-      c.end_transaction(ccid)
-      c.disconnect()
-    elif info.payment == UIPayment.DebitCard:
-      d = DebitCard()
-      d.connect()
-      dcid: int = d.begin_transaction(round(price, 2))
-      d.end_transaction(dcid)
-      d.disconnect()
-    elif info.payment == UIPayment.Cash:
-      coin = IKEAMyntAtare2000()
-      coin.starta()
-      coin.betala(int(round(price * 100)))
-      coin.stoppa()
-
-#region UI Set-up below -- you don't need to change anything
+    betaling( info, price )
+    #region UI Set-up below -- you don't need to change anything
 
   def widgets(self):
     self.master.title("Ticket machine")
