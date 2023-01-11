@@ -18,7 +18,7 @@ class UI(tk.Frame):
 		# **************************************
 		# Below is the code you need to refactor
 		# **************************************
-
+test
 		# get number of tariefeenheden
 		tariefeenheden: int = Tariefeenheden.get_tariefeenheden(info.from_station, info.to_station)
 
