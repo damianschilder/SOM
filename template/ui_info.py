@@ -1,5 +1,14 @@
 from enum import IntEnum
 
+class UIAmount():
+  def __init__(self):
+    self.amount = 1
+  def add(self):
+    self.amount += 1
+    print(self.amount)
+  def subtract(self):
+    self.amount -= 1
+    print(self.amount)
 class UIClass(IntEnum):
 	FirstClass = 1
 	SecondClass = 2
@@ -13,14 +22,6 @@ class UIDiscount(IntEnum):
 	TwentyDiscount = 2
 	FortyDiscount = 3
 
-class UIAmount(IntEnum):
-	def __init__(self):
-		self.Amount = 1
-	def add(self):
-		self.Amount += 1
-	def subtract(self):
-		self.Amount -= 1
-
 class UIPayment(IntEnum):
 	DebitCard = 1
 	CreditCard = 2
@@ -32,14 +33,13 @@ class UIInfo:
 	travel_class: UIClass = UIClass.SecondClass
 	way: UIWay = UIWay.OneWay
 	discount: UIDiscount.NoDiscount
-	amount: UIAmount.Amount
 	payment: UIPayment.Cash
 
-	def __init__(self, from_station: str, to_station: str, travel_class: UIClass, way: UIWay, discount: UIDiscount, amount: UIAmount, payment: UIPayment):
+	def __init__(self, from_station: str, to_station: str, travel_class: UIClass, way: UIWay, discount: UIDiscount, payment: UIPayment):
 		self.from_station = from_station
 		self.to_station = to_station
 		self.travel_class = travel_class
 		self.way = way
 		self.discount = discount
-		self.amount = amount
 		self.payment = payment
+
