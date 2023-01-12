@@ -6,18 +6,17 @@ from pricing_table import PricingTable
 from creditcard import CreditCard
 from debitcard import DebitCard
 from coin_machine import IKEAMyntAtare2000
-from ui_info import UIPayment, UIClass, UIWay, UIDiscount, UIPayment, UIInfo, UIAmount
+from ui_info import UIPayment, UIClass, UIWay, UIDiscount, UIPayment, UIInfo
 
 
 class UI(tk.Frame):
-
   def __init__(self, master):
     tk.Frame.__init__(self, master)
     self.widgets()
 
   def handle_payment(self, info: UIInfo):
     price = prijs( info )
-    price = price.bereken_prijs()
+    price = price.bereken_prijs( tkAmount.get() )
     betaling( info, price )
   
   #region UI Set-up below -- you don't need to change anything
@@ -70,11 +69,12 @@ class UI(tk.Frame):
     
 
     # Amount
+    global tkAmount
+    tkAmount = tk.IntVar( value = 1)
     tk.Label(ticket_options_frame, text = 'Amount').grid(row=14, sticky=tk.W)
-    amount = UIAmount()
-    tk.Label(ticket_options_frame, text = amount.amount ).grid(row=15,  sticky=tk.W, padx=25)
-    tk.Button(ticket_options_frame, text="-", command=amount.subtract).grid(row=15, sticky=tk.W)
-    tk.Button(ticket_options_frame, text="+", command=amount.add).grid(row=15, sticky=tk.W, padx=45)
+    tk.Label(ticket_options_frame, textvariable = tkAmount ).grid(row=15,  sticky=tk.W, padx=25)
+    tk.Button(ticket_options_frame, text="-", command=self.deduct_amount).grid(row=15, sticky=tk.W)
+    tk.Button(ticket_options_frame, text="+", command=self.add_amount).grid(row=15, sticky=tk.W, padx=45)
 
     payment_frame = tk.Frame(self.master, highlightbackground="#cccccc", highlightthickness=1)
     payment_frame.pack(fill=tk.BOTH, expand=1, padx=10, pady=10)
@@ -91,6 +91,13 @@ class UI(tk.Frame):
 
     self.pack(fill=tk.BOTH, expand=1)
   
+  def deduct_amount(self):
+    if (tkAmount.get() <= 1):
+      return
+    tkAmount.set(tkAmount.get() - 1)
+    
+  def add_amount(self):
+    tkAmount.set(tkAmount.get() + 1)
   def on_click_pay(self):
     self.handle_payment(self.get_ui_info())
 

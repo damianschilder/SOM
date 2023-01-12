@@ -1,14 +1,4 @@
 from enum import IntEnum
-
-class UIAmount():
-  def __init__(self):
-    self.amount = 1
-  def add(self):
-    self.amount += 1
-    print(self.amount)
-  def subtract(self):
-    self.amount -= 1
-    print(self.amount)
 class UIClass(IntEnum):
 	FirstClass = 1
 	SecondClass = 2
