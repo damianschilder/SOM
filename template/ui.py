@@ -6,7 +6,7 @@ from pricing_table import PricingTable
 from creditcard import CreditCard
 from debitcard import DebitCard
 from coin_machine import IKEAMyntAtare2000
-from ui_info import UIPayment, UIClass, UIWay, UIDiscount, UIPayment, UIInfo
+from ui_info import UIPayment, UIClass, UIWay, UIDiscount, UIAmount, UIPayment, UIInfo
 
 
 class UI(tk.Frame):
@@ -19,7 +19,8 @@ class UI(tk.Frame):
     price = prijs( info )
     price = price.bereken_prijs()
     betaling( info, price )
-    #region UI Set-up below -- you don't need to change anything
+  
+  #region UI Set-up below -- you don't need to change anything
 
   def widgets(self):
     self.master.title("Ticket machine")
@@ -66,6 +67,11 @@ class UI(tk.Frame):
     tk.Radiobutton(ticket_options_frame, text="No discount", variable=self.discount, value=UIDiscount.NoDiscount.value).grid(row=11, sticky=tk.W)
     tk.Radiobutton(ticket_options_frame, text="20% discount", variable=self.discount, value=UIDiscount.TwentyDiscount.value).grid(row=12, sticky=tk.W)
     tk.Radiobutton(ticket_options_frame, text="40% discount", variable=self.discount, value=UIDiscount.FortyDiscount.value).grid(row=13, sticky=tk.W)
+
+    #Amount of tickets
+    #tk.Label(ticket_options_frame, text = 'Amount').grid(row=14, sticky=tk.W)
+    #self.amount = tk.IntVar(value=UIAmount.Amount.value)
+    # tk.Button(ticket_options_frame, text="-", variable=self.amount, value=UIAmount.subtract.value).grid(row=15, sticky=tk.W)
 
     payment_frame = tk.Frame(self.master, highlightbackground="#cccccc", highlightthickness=1)
     payment_frame.pack(fill=tk.BOTH, expand=1, padx=10, pady=10)
