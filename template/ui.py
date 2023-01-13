@@ -7,13 +7,14 @@ from creditcard import CreditCard
 from debitcard import DebitCard
 from coin_machine import IKEAMyntAtare2000
 from ui_info import UIPayment, UIClass, UIWay, UIDiscount, UIPayment, UIInfo
+from tkcalendar import Calendar
+from datetime import datetime
 
 
 class UI(tk.Frame):
   def __init__(self, master):
     tk.Frame.__init__(self, master)
     self.widgets()
-
   def handle_payment(self, info: UIInfo):
     price = cost( info )
     price = price.calculate_price( tkAmount.get() )
@@ -25,6 +26,7 @@ class UI(tk.Frame):
     self.master.title("Ticket machine")
     menubar = tk.Menu(self.master)
     self.master.config(menu=menubar)
+    self.master.geometry("1080x600")
 
     fileMenu = tk.Menu(menubar)
     fileMenu.add_command(label="Exit", command=self.on_exit)
@@ -33,8 +35,11 @@ class UI(tk.Frame):
     # retrieve the list of stations
     data2 = Tariefeenheden.get_stations()
 
-    stations_frame = tk.Frame(self.master, highlightbackground="#cccccc", highlightthickness=1)
-    stations_frame.pack(fill=tk.BOTH, expand=1, padx=10, pady=10)
+    # stations_frame = tk.Frame(self.master, highlightbackground="#cccccc", highlightthickness=1)
+    # stations_frame.pack(fill=tk.BOTH, expand=1, padx=10, pady=10)
+    stations_frame = tk.Canvas(self.master, highlightbackground="#cccccc", highlightthickness=1)
+    stations_frame.pack(side=tk.LEFT,fill=tk.BOTH,expand=1)
+    stations_frame.config(width=20, height=600)
     # From station
     tk.Label(stations_frame, text = "From station:").grid(row=0, padx=5, sticky=tk.W)
     self.from_station = tk.StringVar(value=data2[0])
@@ -45,8 +50,12 @@ class UI(tk.Frame):
     self.to_station = tk.StringVar(value=data2[0])
     tk.OptionMenu(stations_frame, self.to_station, *data2).grid(row=1, column=1, sticky=tk.W)
 
-    ticket_options_frame = tk.Frame(self.master, highlightbackground="#cccccc", highlightthickness=1)
-    ticket_options_frame.pack(fill=tk.BOTH, expand=1, padx=10)
+    # ticket_options_frame = tk.Frame(self.master, highlightbackground="#cccccc", highlightthickness=1)
+    # ticket_options_frame.pack(fill=tk.BOTH, expand=1, padx=10)
+    ticket_options_frame = tk.Canvas(self.master, highlightbackground="#cccccc", highlightthickness=1)
+    ticket_options_frame.pack(side=tk.LEFT,fill=tk.BOTH,expand=1, padx=10)
+    stations_frame.config(width=260, height=600)
+
 
     # Class
     tk.Label(ticket_options_frame, text = "Travel class:").grid(row=1, sticky=tk.W)
@@ -75,18 +84,24 @@ class UI(tk.Frame):
     tk.Button(ticket_options_frame, text="-", command=self.deduct_amount).grid(row=15, sticky=tk.W)
     tk.Button(ticket_options_frame, text="+", command=self.add_amount).grid(row=15, sticky=tk.W, padx=45)
 
-    payment_frame = tk.Frame(self.master, highlightbackground="#cccccc", highlightthickness=1)
-    payment_frame.pack(fill=tk.BOTH, expand=1, padx=10, pady=10)
+    tk.Label(ticket_options_frame, text = 'Date').grid(row=16, sticky=tk.W, pady=15)
+    print(datetime.today().strftime('%m'))
+    cal = Calendar(ticket_options_frame, selectmode = 'day', year = 2023, month = int(datetime.today().strftime('%m')), day = int(datetime.today().strftime('%d')))
+    cal.grid(row=17, sticky=tk.W) 
+
+    payment_frame = tk.Canvas(self.master)
+    payment_frame.pack(side=tk.RIGHT,fill=tk.BOTH,expand=1)
+    payment_frame.config(width=360, height=600)
 
     # Payment
-    tk.Label(payment_frame, text = "Payment:").grid(row=14, sticky=tk.W)
+    tk.Label(payment_frame, text = "Payment:").grid(row=0, sticky=tk.W)
     self.payment = tk.IntVar(value=UIPayment.Cash.value)
-    tk.Radiobutton(payment_frame, text="Cash", variable=self.payment, value=UIPayment.Cash.value).grid(row=15, sticky=tk.W)
-    tk.Radiobutton(payment_frame, text="Credit Card", variable=self.payment, value=UIPayment.CreditCard.value).grid(row=16, sticky=tk.W)
-    tk.Radiobutton(payment_frame, text="Debit Card", variable=self.payment, value=UIPayment.DebitCard.value).grid(row=17, sticky=tk.W)
+    tk.Radiobutton(payment_frame, text="Cash", variable=self.payment, value=UIPayment.Cash.value).grid(row=1, sticky=tk.W)
+    tk.Radiobutton(payment_frame, text="Credit Card", variable=self.payment, value=UIPayment.CreditCard.value).grid(row=2, sticky=tk.W)
+    tk.Radiobutton(payment_frame, text="Debit Card", variable=self.payment, value=UIPayment.DebitCard.value).grid(row=3, sticky=tk.W)
 
     # Pay button
-    tk.Button(self.master, text="Pay", command=self.on_click_pay).pack(side=tk.RIGHT, ipadx=10, padx=10, pady=10)
+    tk.Button(payment_frame, text="Pay", command=self.on_click_pay).grid(row=5, sticky=tk.W)
 
     self.pack(fill=tk.BOTH, expand=1)
   
