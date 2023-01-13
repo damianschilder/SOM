@@ -2,7 +2,7 @@ from tariefeenheden import Tariefeenheden
 from pricing_table import PricingTable
 from ui_info import UIPayment, UIClass, UIWay, UIDiscount, UIPayment, UIInfo
 
-class prijs():
+class cost():
   def __init__( self, info: UIInfo ):
     self.table_column = 0
     self.info = info
@@ -15,7 +15,7 @@ class prijs():
       self.table_column += 1
     elif info.discount == UIDiscount.FortyDiscount:
       self.table_column += 2
-  def bereken_prijs( self, amount ):
+  def calculate_price( self, amount ):
     # compute price
     price: float = PricingTable.get_price (self.tariefeenheden, self.table_column)
     print(self.tariefeenheden)

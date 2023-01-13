@@ -1,7 +1,7 @@
 from tariefeenheden import Tariefeenheden
 import tkinter as tk
-from bereken_prijs import prijs
-from betaling import betaling
+from calculate_price import cost
+from payment import payment
 from pricing_table import PricingTable
 from creditcard import CreditCard
 from debitcard import DebitCard
@@ -15,9 +15,9 @@ class UI(tk.Frame):
     self.widgets()
 
   def handle_payment(self, info: UIInfo):
-    price = prijs( info )
-    price = price.bereken_prijs( tkAmount.get() )
-    betaling( info, price )
+    price = cost( info )
+    price = price.calculate_price( tkAmount.get() )
+    payment( info, price )
   
   #region UI Set-up below -- you don't need to change anything
 
@@ -66,7 +66,6 @@ class UI(tk.Frame):
     tk.Radiobutton(ticket_options_frame, text="No discount", variable=self.discount, value=UIDiscount.NoDiscount.value).grid(row=11, sticky=tk.W)
     tk.Radiobutton(ticket_options_frame, text="20% discount", variable=self.discount, value=UIDiscount.TwentyDiscount.value).grid(row=12, sticky=tk.W)
     tk.Radiobutton(ticket_options_frame, text="40% discount", variable=self.discount, value=UIDiscount.FortyDiscount.value).grid(row=13, sticky=tk.W)
-    
 
     # Amount
     global tkAmount
@@ -98,6 +97,7 @@ class UI(tk.Frame):
     
   def add_amount(self):
     tkAmount.set(tkAmount.get() + 1)
+  
   def on_click_pay(self):
     self.handle_payment(self.get_ui_info())
 

@@ -3,7 +3,7 @@ from debitcard import DebitCard
 from coin_machine import IKEAMyntAtare2000
 from ui_info import UIPayment, UIPayment, UIInfo
 
-class betaling():
+class payment():
   def __init__( self, info: UIInfo, price ):
     if info.payment == UIPayment.CreditCard:
       c = CreditCard()
