@@ -1,0 +1,39 @@
+{% extends "ticketmachine/layout.html" %}
+
+{% block main %}
+    <div class="table_div">
+        <form class="form_class"  action="{% url 'ticketmachine:payment' %}" method="POST">
+            {% csrf_token %}
+            <div class="alert">
+                <p>You are going to pay {{ price }} Euro for your trip.</p>
+            </div>
+            <div class="form_div">
+                {% for field in form %}
+                        <label class="form_label">{{ field.label }}</label>
+                        {{ field }}
+                {% endfor %}
+            </div>
+            <input class="submit_class" type="submit" value="Confirm and Pay">
+        </form>
+        <table>
+            <thead>
+               <tr>
+                    <td>Final Destination</td>
+                    <td>Departure Time</td>
+                    <td>Duration</td>
+                    <td>Transfer</td>
+                    <td>Crowd Forcast</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trip in trips %}
+                    <tr>
+                        {% for value in trip.values %}
+                            <td>{{ value }} </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{% static 'ticketmachine/styles.css' %}">
+        <title>Train Ticket</title>
+    </head>
+    <body>
+        <header>
+            <img class="logo" src="{% static 'ticketmachine/Logo-NS.png' %}"/>
+            <h2>Plan Your Trip</h2>
+        </header>
+        <main>
+            {% block main %}
+            {% endblock %}
+        </main>
+    </body>
+

@@ -85,7 +85,6 @@ class UI(tk.Frame):
     tk.Button(ticket_options_frame, text="+", command=self.add_amount).grid(row=15, sticky=tk.W, padx=45)
 
     tk.Label(ticket_options_frame, text = 'Date').grid(row=16, sticky=tk.W, pady=15)
-    print(datetime.today().strftime('%m'))
     cal = Calendar(ticket_options_frame, selectmode = 'day', year = 2023, month = int(datetime.today().strftime('%m')), day = int(datetime.today().strftime('%d')))
     cal.grid(row=17, sticky=tk.W) 
 

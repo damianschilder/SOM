@@ -1,0 +1,15 @@
+{% extends "ticketmachine/layout.html" %}
+
+{% block main %}
+    <form id="ticket_form" class="form_class"  action="{% url 'ticketmachine:planning' %}" method="GET">
+
+        {% for field in form %}
+            <div class="form_div">
+                <label class="form_label">{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+
+        <input class="submit_class" type="submit" value="Show the Price">
+    </form>
+{% endblock %}
