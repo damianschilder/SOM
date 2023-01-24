@@ -1,7 +1,12 @@
 from django.shortcuts import render
 from django import forms
+import requests
+import json
+import pandas as pd
+from datetime import datetime
 
-# (STATION UIcCODE, STATION NAME)
+stationsDf = pd.read_excel('ticketmachine\stations-2022-01-nl.xlsx')
+
 stations = (
     ("8400621", "Utrecht Centraal"),
     ("8400282", "Den Haag Centraal"),
@@ -19,6 +24,7 @@ stations = (
     ("8400285", "Haarlem")
 )
 
+
 travel_class = (
     ('1', 'First class'),
     ('2', 'Second class'),
@@ -33,6 +39,9 @@ payment_methods = (('1', 'Debit Card'),
                    ('3', 'Cash')
                    )
 
+test = {
+  
+}
 
 # make a form for ticket
 class SelectTicketForm(forms.Form):
@@ -55,6 +64,12 @@ def index(request):
 
 
 def planning(request):
+    global fromStation
+    global endStation
+    global travelClass
+    fromStation = request.GET.get("from_station")
+    endStation = request.GET.get("to_station")
+    travelClass = request.GET.get("travel_class")
     return render(request, "ticketmachine/planning.html", {
         "form": PaymentForm({'payment': '1'}),
         "price": getprice(),
@@ -82,20 +97,50 @@ def payment(request):
 
 
 def gettrips():
-    url = "https://gateway.apiportal.ns.nl/reisinformatie-api/api/v3/trips"
-    headers = {'Ocp-Apim-Subscription-Key': 'PUT_YOUR_AUTHORIZATION_KEY_HERE'}
+    beginStation = stationsDf.loc[stationsDf['uic'] == int(fromStation)]['code'].values[0]
+    toStation = stationsDf.loc[stationsDf['uic'] == int(endStation)]['code'].values[0]
+    now = datetime.now()
 
-    # SEND A PROPER REQUEST TO URL AND POPULATE "trips" WITH REQUIRED FIELDS IN THE RESPONSE OF API
+    url = "https://gateway.apiportal.ns.nl/reisinformatie-api/api/v3/trips"
+    headers = {'Ocp-Apim-Subscription-Key': 'f7cb7bf0fdd844658153f525c346baa2'}
+    parameters = {
+      'fromStation': beginStation,
+      'toStation': toStation,
+      'dateTime': now,
+      'travelClass': travelClass,
+    }
+    r = requests.get( url, headers=headers, params=parameters )
+    data = json.loads(r.content.decode('utf-8'))
+
     trips = [{"final_destination": "Amsterdam Centraal", "plannedDateTime": "2023-01-18 10:48",
               "plannedDurationInMinutes": "38", "transfers": "2",
               "crowdForecast": "normal"}]
+    trips = []
+    returnedTrips = data['trips'][0:5]
+    destination = stationsDf.loc[stationsDf['uic'] == int(endStation)]['name_long'].values[0]
+    for trip in returnedTrips:
+      plannedTime = trip['legs'][0]['origin']['plannedDateTime'][:-5]
+      plannedTimeObject = datetime.strptime( plannedTime, '%Y-%m-%dT%H:%M:%S').strftime('%H:%M')
+
+      trips.append({"final_destination": destination, "plannedDateTime": plannedTimeObject,
+              "plannedDurationInMinutes": trip['plannedDurationInMinutes'], "transfers": trip['transfers'],
+              "crowdForecast": trip['crowdForecast'].title()})
     return trips
 
 
 def getprice():
     url = "https://gateway.apiportal.ns.nl/reisinformatie-api/api/v2/price"
-    headers = {'Ocp-Apim-Subscription-Key': 'PUT_YOUR_AUTHORIZATION_KEY_HERE'}
+    headers = {'Ocp-Apim-Subscription-Key': 'f7cb7bf0fdd844658153f525c346baa2'}
 
-    # SEND A PROPER REQUEST TO URL AND POPULATE "total_price" WITH "totalPriceInCents" FIELD IN THE RESPONSE
-    total_price = 12.32
+    beginStation = stationsDf.loc[stationsDf['uic'] == int(fromStation)]['code'].values[0]
+    toStation = stationsDf.loc[stationsDf['uic'] == int(endStation)]['code'].values[0]
+
+    parameters = {
+      'fromStation': beginStation,
+      'toStation': toStation,
+    }
+    r = requests.get( url, headers=headers, params=parameters )
+    data = json.loads(r.content.decode('utf-8'))
+
+    total_price = data['payload']['totalPriceInCents'] / 100
     return total_price
