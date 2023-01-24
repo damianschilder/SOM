@@ -67,9 +67,13 @@ def planning(request):
     global fromStation
     global endStation
     global travelClass
+    global travelWay
+    global amountPassengers
     fromStation = request.GET.get("from_station")
     endStation = request.GET.get("to_station")
     travelClass = request.GET.get("travel_class")
+    travelWay = request.GET.get("way")
+    amountPassengers = request.GET.get("passengers")
     return render(request, "ticketmachine/planning.html", {
         "form": PaymentForm({'payment': '1'}),
         "price": getprice(),
@@ -134,7 +138,6 @@ def getprice():
 
     beginStation = stationsDf.loc[stationsDf['uic'] == int(fromStation)]['code'].values[0]
     toStation = stationsDf.loc[stationsDf['uic'] == int(endStation)]['code'].values[0]
-
     parameters = {
       'fromStation': beginStation,
       'toStation': toStation,
@@ -143,4 +146,7 @@ def getprice():
     data = json.loads(r.content.decode('utf-8'))
 
     total_price = data['payload']['totalPriceInCents'] / 100
+    total_price = total_price * int(amountPassengers)
+    if (travelWay == 'return' ):
+      total_price = total_price * 2
     return total_price
