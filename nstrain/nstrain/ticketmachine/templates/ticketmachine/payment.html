@@ -4,10 +4,13 @@
     <div class="payment_div">
         <div class="message">
             <div class="blink">
-                <h2>Connecting to your debit card...</h2>
+                <h2>{{ payment_method }}</h2>
+                
             </div>
             <p>
-                <a class="button">Back to Home</a>
+                <a href="{% url 'ticketmachine:index' %}">
+                    <input class="button" type="submit" value="Back to home">
+                </a>
             </p>
         </div>
     </div>

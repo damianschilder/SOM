@@ -1,8 +1,8 @@
 {% extends "ticketmachine/layout.html" %}
 
 {% block main %}
-    <form id="ticket_form" class="form_class"  action="{% url 'ticketmachine:planning' %}" method="GET">
-
+    <form id="ticket_form" class="form_class"  action="{% url 'ticketmachine:planning' %}" method="POST">
+        {% csrf_token %}
         {% for field in form %}
             <div class="form_div">
                 <label class="form_label">{{ field.label }}</label>

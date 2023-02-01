@@ -34,14 +34,10 @@ way = (('single', 'One way'),
        ('return', 'Return')
        )
 
-payment_methods = (('1', 'Debit Card'),
-                   ('2', 'Credit Card'),
-                   ('3', 'Cash')
+payment_methods = (('Debit Card', 'Debit Card'),
+                   ('Credit Card', 'Credit Card'),
+                   ('Cash', 'Cash')
                    )
-
-test = {
-  
-}
 
 # make a form for ticket
 class SelectTicketForm(forms.Form):
@@ -69,11 +65,14 @@ def planning(request):
     global travelClass
     global travelWay
     global amountPassengers
-    fromStation = request.GET.get("from_station")
-    endStation = request.GET.get("to_station")
-    travelClass = request.GET.get("travel_class")
-    travelWay = request.GET.get("way")
-    amountPassengers = request.GET.get("passengers")
+    if request.method == 'POST':
+      form = SelectTicketForm(request.POST)
+      if form.is_valid():
+        fromStation = request.POST.get("from_station")
+        endStation = request.POST.get("to_station")
+        travelClass = request.POST.get("travel_class")
+        travelWay = request.POST.get("way")
+        amountPassengers = request.POST.get("passengers")
     return render(request, "ticketmachine/planning.html", {
         "form": PaymentForm({'payment': '1'}),
         "price": getprice(),
@@ -85,9 +84,21 @@ def payment(request):
     if request.method == "POST":
         form = PaymentForm(request.POST)
         if form.is_valid():
-            payment_method = "1"
-            return render(request, "ticketmachine/payment.html", {
-                "payment_method": payment_method,
+            payment_method = request.POST.get('payment')
+            if payment_method == 'Debit Card':
+                text_payment = 'Connecting to your debit card'
+                return render(request, "ticketmachine/payment.html", {
+                    "payment_method": text_payment,
+            })
+            if payment_method == 'Credit Card':
+                text_payment = 'Connecting to your credit card'
+                return render(request, "ticketmachine/payment.html", {
+                    "payment_method": text_payment,
+            })
+            if payment_method == 'Cash':
+                text_payment = 'Please insert cash'
+                return render(request, "ticketmachine/payment.html", {
+                    "payment_method": text_payment,
             })
         else:
             return render(request, "ticketmachine/planning.html", {
