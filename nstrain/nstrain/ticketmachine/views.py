@@ -127,9 +127,6 @@ def gettrips():
     r = requests.get( url, headers=headers, params=parameters )
     data = json.loads(r.content.decode('utf-8'))
 
-    trips = [{"final_destination": "Amsterdam Centraal", "plannedDateTime": "2023-01-18 10:48",
-              "plannedDurationInMinutes": "38", "transfers": "2",
-              "crowdForecast": "normal"}]
     trips = []
     returnedTrips = data['trips'][0:5]
     destination = stationsDf.loc[stationsDf['uic'] == int(endStation)]['name_long'].values[0]
