@@ -1,7 +1,7 @@
-from django.shortcuts import render
-from django import forms
-import requests
 import json
+from django import forms
+from django.shortcuts import render
+import requests
 import pandas as pd
 from datetime import datetime
 
@@ -43,19 +43,22 @@ payment_methods = (
 class SelectTicketForm(forms.Form):
   from_station = forms.ChoiceField(choices=stations)
   to_station = forms.ChoiceField(choices=stations)
-  travel_class = forms.CharField(label='Travel class', widget=forms.RadioSelect(choices=travel_class))
+  travel_class = forms.CharField(label='Travel class', 
+  widget=forms.RadioSelect(choices=travel_class))
   way = forms.CharField(label='Way', widget=forms.RadioSelect(choices=way))
   passengers = forms.IntegerField(label="Number of passengers", min_value=1, max_value=10)
 
 
 # make a form for payment methods
 class PaymentForm(forms.Form):
-  payment = forms.CharField(label='Payment Method', widget=forms.RadioSelect(choices=payment_methods))
+  payment = forms.CharField(label='Payment Method', 
+  widget=forms.RadioSelect(choices=payment_methods))
 
 
 def index(request):
   return render(request, "ticketmachine/index.html", {
-      "form": SelectTicketForm({'travel_class': '2', 'way': 'single', 'discount': '1', 'passengers': 1})
+      "form": SelectTicketForm({'travel_class': '2', 'way': 
+      'single', 'discount': '1', 'passengers': 1})
   })
 
 
@@ -73,11 +76,20 @@ def planning(request):
       form_travel_class = request.POST.get("travel_class")
       form_travelway = request.POST.get("way")
       form_passenger_amount = request.POST.get("passengers")
-  return render(request, "ticketmachine/planning.html", {
-    "form": PaymentForm({'payment': '1'}),
-    "price": get_price(),
-    "trips": get_trips()
-    })
+  if form_from_station != form_to_station:
+    return render(request, "ticketmachine/planning.html", {
+      "form": PaymentForm({'payment': '1'}),
+      "price": get_price(),
+      "trips": get_trips()
+      })
+  else:
+    return render(request, "ticketmachine/index.html", {
+      "form": SelectTicketForm({
+        'travel_class': form_travel_class, 
+        'way': form_travelway, 
+        'discount': '1', 
+        'passengers': form_passenger_amount})
+      })
 
 
 def payment(request):
@@ -142,12 +154,14 @@ def get_trips():
     planned_time_object = datetime.strptime( planned_time, '%Y-%m-%dT%H:%M:%S').strftime('%H:%M')
 
     trips.append({"final_destination": destination, "plannedDateTime": planned_time_object,
-            "plannedDurationInMinutes": trip['plannedDurationInMinutes'], "transfers": trip['transfers'],
+            "plannedDurationInMinutes": trip['plannedDurationInMinutes'], 
+            "transfers": trip['transfers'],
             "crowdForecast": trip['crowdForecast'].title()})
   return trips
 
 
 def get_price():
+
   url = "https://gateway.apiportal.ns.nl/reisinformatie-api/api/v2/price"
   parameters = {
     'fromStation': lookup_station(form_from_station, "code"),
